@@ -17,7 +17,7 @@
 3. Após criado, vá em **Variables** e copie a `DATABASE_URL`
    - O formato será: `postgresql://postgres:senha@host:port/railway`
    - **Adicione `?sslmode=require` no final:** `postgresql://...railway?sslmode=require`
-postgresql://postgres:vCNZznpKEUZtMRMIFXIeaEPPbMvNmRvo@hayabusa.proxy.rlwy.net:58281/railway?sslmode=require
+
 ---
 
 ## Passo 2 — Cloudinary
