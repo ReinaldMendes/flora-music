@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/api-auth'
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const params = await context.params
   const { error } = await requireAdmin()
   if (error) return error
   try {
@@ -14,7 +15,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const params = await context.params
   const { error } = await requireAdmin()
   if (error) return error
   await prisma.video.delete({ where: { id: params.id } })
