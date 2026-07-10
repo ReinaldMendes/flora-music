@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 async function getStats() {
   const [albums, shows, posts, products, orders, subscribers, videos] = await Promise.all([
     prisma.album.count(),
