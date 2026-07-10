@@ -10,18 +10,17 @@ import { formatDate } from '@/lib/utils'
 
 interface Props { params: { slug: string } }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await prisma.blogPost.findUnique({ where: { slug: params.slug } })
-  if (!post) return { title: 'Post não encontrado' }
-  return { title: post.title, description: post.excerpt || post.title }
+  try {
+    const post = await prisma.blogPost.findUnique({ where: { slug: params.slug } })
+    if (!post) return { title: 'Post não encontrado' }
+    return { title: post.title, description: post.excerpt || post.title }
+  } catch {
+    return { title: 'Blog', description: 'Post de blog da Flora' }
+  }
 }
-
-export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({ where: { published: true }, select: { slug: true } })
-  return posts.map(p => ({ slug: p.slug }))
-}
-
-export const revalidate = 3600
 
 export default async function BlogPostPage({ params }: Props) {
   const post = await prisma.blogPost.findUnique({

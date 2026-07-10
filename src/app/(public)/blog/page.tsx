@@ -11,13 +11,19 @@ export const metadata: Metadata = {
   title: 'Blog',
   description: 'Textos, reflexões e poesias de Flora.',
 }
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function BlogPage() {
-  const posts = await prisma.blogPost.findMany({
-    where: { published: true },
-    orderBy: { publishedAt: 'desc' },
-  })
+  let posts = []
+
+  try {
+    posts = await prisma.blogPost.findMany({
+      where: { published: true },
+      orderBy: { publishedAt: 'desc' },
+    })
+  } catch {
+    posts = []
+  }
 
   return (
     <>
