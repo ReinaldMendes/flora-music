@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/api-auth'
 import { slugify } from '@/lib/utils'
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const params = await context.params
   const album = await prisma.album.findUnique({
     where: { id: params.id },
     include: { tracks: { orderBy: { trackNumber: 'asc' }, include: { credits: true } }, credits: true },
@@ -12,7 +13,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   return NextResponse.json(album)
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const params = await context.params
   const { error } = await requireAdmin()
   if (error) return error
   try {
@@ -27,7 +29,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, context: { params: { id: string } | Promise<{ id: string }> }) {
+  const params = await context.params
   const { error } = await requireAdmin()
   if (error) return error
   await prisma.album.delete({ where: { id: params.id } })
