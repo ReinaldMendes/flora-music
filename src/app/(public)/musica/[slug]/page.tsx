@@ -11,15 +11,25 @@ import { formatDate } from '@/lib/utils'
 
 interface Props { params: { slug: string } }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const album = await prisma.album.findUnique({ where: { slug: params.slug } })
-  if (!album) return { title: 'Álbum não encontrado' }
-  return { title: album.title, description: album.description || `Álbum ${album.title} de Flora.` }
+  try {
+    const album = await prisma.album.findUnique({ where: { slug: params.slug } })
+    if (!album) return { title: 'Álbum não encontrado' }
+    return { title: album.title, description: album.description || `Álbum ${album.title} de Flora.` }
+  } catch {
+    return { title: 'Álbum', description: 'Álbum de Flora' }
+  }
 }
 
 export async function generateStaticParams() {
-  const albums = await prisma.album.findMany({ where: { published: true }, select: { slug: true } })
-  return albums.map(a => ({ slug: a.slug }))
+  try {
+    const albums = await prisma.album.findMany({ where: { published: true }, select: { slug: true } })
+    return albums.map(a => ({ slug: a.slug }))
+  } catch {
+    return []
+  }
 }
 
 export const revalidate = 3600
