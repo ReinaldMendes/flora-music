@@ -10,7 +10,7 @@ const schema = z.object({
   coverUrl: z.string().min(1),
   description: z.string().optional(),
   type: z.enum(['LP', 'EP', 'SINGLE']),
-  streamingLinks: z.record(z.string()).optional(),
+  streamingLinks: z.record(z.string(), z.string()).optional(),
   featured: z.boolean().optional(),
   published: z.boolean().optional(),
 })
