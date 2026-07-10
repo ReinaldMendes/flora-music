@@ -7,15 +7,25 @@ import AnimatedText from '@/components/ui/AnimatedText'
 
 interface Props { params: { slug: string } }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const track = await prisma.track.findUnique({ where: { slug: params.slug }, include: { album: true } })
-  if (!track) return { title: 'Letra não encontrada' }
-  return { title: `${track.title} — Letra`, description: `Letra de "${track.title}" do álbum ${track.album.title} de Flora.` }
+  try {
+    const track = await prisma.track.findUnique({ where: { slug: params.slug }, include: { album: true } })
+    if (!track) return { title: 'Letra não encontrada' }
+    return { title: `${track.title} — Letra`, description: `Letra de "${track.title}" do álbum ${track.album.title} de Flora.` }
+  } catch {
+    return { title: 'Letra', description: 'Letra de música de Flora' }
+  }
 }
 
 export async function generateStaticParams() {
-  const tracks = await prisma.track.findMany({ where: { lyrics: { not: null } }, select: { slug: true } })
-  return tracks.map(t => ({ slug: t.slug }))
+  try {
+    const tracks = await prisma.track.findMany({ where: { lyrics: { not: null } }, select: { slug: true } })
+    return tracks.map(t => ({ slug: t.slug }))
+  } catch {
+    return []
+  }
 }
 
 export const revalidate = 3600
