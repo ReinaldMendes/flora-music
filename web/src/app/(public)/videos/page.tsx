@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import AnimatedSection from '@/components/ui/AnimatedSection'
+import { fetchApi } from '@/lib/fetch-api'
+
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Vídeos', description: 'Clipes, sessões acústicas e bastidores de Flora.' }
-async function getData() {
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
-  try { return await fetch(`${API}/videos`, { next: { revalidate: 3600 } }).then(r => r.json()) }
-  catch { return [] }
-}
+
 export default async function VideosPage() {
-  const videos = await getData()
+  const videos = await fetchApi<any[]>('/videos', [])
+
   return (
     <>
       <div className="pt-32 pb-16 bg-flora-deep text-flora-cream">
@@ -31,6 +31,9 @@ export default async function VideosPage() {
               </div>
             </AnimatedSection>
           ))}
+          {videos.length === 0 && (
+            <p className="font-display text-2xl text-flora-deep/30">Vídeos em breve.</p>
+          )}
         </div>
       </section>
     </>

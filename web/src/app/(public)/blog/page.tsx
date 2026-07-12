@@ -3,15 +3,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import Badge from '@/components/ui/Badge'
-import { formatDate, truncate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
+import { fetchApi } from '@/lib/fetch-api'
+
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Blog', description: 'Textos, reflexões e poesias de Flora.' }
-async function getData() {
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
-  try { return await fetch(`${API}/blog?published=true`, { next: { revalidate: 3600 } }).then(r => r.json()) }
-  catch { return [] }
-}
+
 export default async function BlogPage() {
-  const posts = await getData()
+  const posts = await fetchApi<any[]>('/blog?published=true', [])
+
   return (
     <>
       <div className="pt-32 pb-16 bg-flora-offwhite border-b border-flora-moss/10">
@@ -38,6 +38,9 @@ export default async function BlogPage() {
               </Link>
             </AnimatedSection>
           ))}
+          {posts.length === 0 && (
+            <p className="font-display text-2xl text-flora-deep/30 col-span-2">Posts em breve.</p>
+          )}
         </div>
       </section>
     </>

@@ -4,18 +4,15 @@ import Link from 'next/link'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import Badge from '@/components/ui/Badge'
 import { formatDate } from '@/lib/utils'
+import { fetchApi } from '@/lib/fetch-api'
 import type { Album } from '@/types'
 
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Música', description: 'Toda a discografia de Flora.' }
 
-async function getAlbuns() {
-  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
-  try { return await fetch(`${API}/albuns?published=true`, { next: { revalidate: 3600 } }).then(r => r.json()) }
-  catch { return [] }
-}
-
 export default async function MusicaPage() {
-  const albums: Album[] = await getAlbuns()
+  const albums = await fetchApi<Album[]>('/albuns?published=true', [])
+
   return (
     <>
       <div className="pt-32 pb-16 bg-flora-deep">
@@ -55,7 +52,7 @@ export default async function MusicaPage() {
                   {album.streamingLinks && (
                     <div className="flex gap-3 flex-wrap">
                       {Object.entries(album.streamingLinks).map(([platform, url]) => (
-                        <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-flora-moss/30 text-xs font-body text-flora-forest rounded capitalize hover:bg-flora-deep hover:text-flora-cream hover:border-flora-deep transition-all duration-300">{platform}</a>
+                        <a key={platform} href={url as string} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-flora-moss/30 text-xs font-body text-flora-forest rounded capitalize hover:bg-flora-deep hover:text-flora-cream hover:border-flora-deep transition-all duration-300">{platform}</a>
                       ))}
                     </div>
                   )}
@@ -63,6 +60,9 @@ export default async function MusicaPage() {
               </div>
             </AnimatedSection>
           ))}
+          {albums.length === 0 && (
+            <p className="font-display text-2xl text-flora-deep/30">Em breve.</p>
+          )}
         </div>
       </section>
     </>

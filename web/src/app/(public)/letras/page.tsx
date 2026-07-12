@@ -1,18 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AnimatedSection from '@/components/ui/AnimatedSection'
-import { formatDate } from '@/lib/utils'
+import { fetchApi } from '@/lib/fetch-api'
 
-export const metadata: Metadata = { title: 'Letras', description: 'Todas as letras de Flora — leia, sinta, contemple.' }
-
-async function getData() {
-  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
-  try { return await fetch(`${API}/albuns?published=true`, { next: { revalidate: 3600 } }).then(r => r.json()) }
-  catch { return [] }
-}
+export const dynamic = 'force-dynamic'
+export const metadata: Metadata = { title: 'Letras', description: 'Todas as letras de Flora.' }
 
 export default async function LetrasPage() {
-  const albums = await getData()
+  const albums = await fetchApi<any[]>('/albuns?published=true', [])
+
   return (
     <>
       <div className="pt-32 pb-16 bg-flora-offwhite border-b border-flora-moss/10">
@@ -29,7 +25,7 @@ export default async function LetrasPage() {
                 {album.title} · {new Date(album.releaseDate).getFullYear()}
               </p>
               <div>
-                {album.tracks?.filter((t: any) => t.lyrics).map((track: any) => (
+                {(album.tracks || []).filter((t: any) => t.lyrics).map((track: any) => (
                   <Link key={track.id} href={`/letras/${track.slug}`}
                     className="group flex items-center justify-between py-4 border-b border-flora-moss/10 hover:border-flora-moss/30 transition-colors">
                     <span className="font-display text-lg text-flora-deep group-hover:text-flora-copper transition-colors">{track.title}</span>
@@ -39,6 +35,9 @@ export default async function LetrasPage() {
               </div>
             </AnimatedSection>
           ))}
+          {albums.length === 0 && (
+            <p className="font-display text-2xl text-flora-deep/30">Letras em breve.</p>
+          )}
         </div>
       </section>
     </>

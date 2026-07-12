@@ -2,17 +2,18 @@ import type { Metadata } from 'next'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import Badge from '@/components/ui/Badge'
 import { formatDate } from '@/lib/utils'
-export const metadata: Metadata = { title: 'Agenda', description: 'Próximos shows e apresentações de Flora.' }
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+import { fetchApi } from '@/lib/fetch-api'
+
+export const dynamic = 'force-dynamic'
+export const metadata: Metadata = { title: 'Agenda', description: 'Próximos shows de Flora.' }
+
 const statusLabel: Record<string,string> = { UPCOMING: 'Em breve', SOLD_OUT: 'Esgotado', CANCELLED: 'Cancelado', DONE: 'Realizado' }
-async function getData() {
-  try {
-    const shows = await fetch(`${API}/shows`, { next: { revalidate: 1800 } }).then(r => r.json())
-    return { upcoming: shows.filter((s: any) => ["UPCOMING","SOLD_OUT"].includes(s.status)), past: shows.filter((s: any) => ["DONE","CANCELLED"].includes(s.status)) }
-  } catch { return { upcoming: [], past: [] } }
-}
+
 export default async function AgendaPage() {
-  const { upcoming, past } = await getData()
+  const allShows = await fetchApi<any[]>('/shows', [])
+  const upcoming = allShows.filter(s => ['UPCOMING','SOLD_OUT'].includes(s.status))
+  const past     = allShows.filter(s => ['DONE','CANCELLED'].includes(s.status))
+
   return (
     <>
       <div className="pt-32 pb-16 bg-flora-deep text-flora-cream">
