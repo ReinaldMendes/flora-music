@@ -1,0 +1,91 @@
+/* Fontes locais via @fontsource — sem dependência de rede no build */
+@import '@fontsource/cormorant-garamond/300.css';
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/300-italic.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
+@import '@fontsource/dm-sans/300.css';
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/lora/400.css';
+@import '@fontsource/lora/500.css';
+@import '@fontsource/lora/400-italic.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #FAFAF7;
+    color: #272B00;
+    line-height: 1.7;
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  ::selection { background-color: #86895D33; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background-color: #FAFAF7; }
+  ::-webkit-scrollbar-thumb { background-color: #86895D; border-radius: 2px; }
+}
+
+@layer utilities {
+  .section-padding {
+    padding-top: clamp(4rem, 10vw, 8rem);
+    padding-bottom: clamp(4rem, 10vw, 8rem);
+  }
+
+  .container-flora {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1.5rem, 5vw, 4rem);
+    padding-right: clamp(1.5rem, 5vw, 4rem);
+  }
+
+  .font-display {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+  }
+
+  .font-body {
+    font-family: "DM Sans", system-ui, sans-serif !important;
+  }
+
+  .font-lyrics {
+    font-family: "Lora", Georgia, serif !important;
+  }
+
+  .underline-flora { position: relative; }
+  .underline-flora::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.4s ease;
+  }
+  .underline-flora:hover::after { width: 100%; }
+
+  .text-hero  { font-size: clamp(3rem, 8vw, 7rem);     line-height: 0.95; letter-spacing: -0.02em; }
+  .text-title { font-size: clamp(2rem, 5vw, 4rem);      line-height: 1.05; letter-spacing: -0.01em; }
+  .text-h1    { font-size: clamp(1.75rem, 4vw, 3rem);   line-height: 1.1; }
+  .text-h2    { font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.15; }
+}
