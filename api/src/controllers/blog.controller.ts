@@ -3,22 +3,23 @@ import { prisma } from '../lib/prisma'
 import { slugify } from '../lib/slugify'
 
 export async function getAll(req: Request, res: Response) {
-  const { published } = req.query
-  const where = published === 'true' ? { published: true } : {}
+  const where = req.query.published === 'true' ? { published: true } : {}
   const posts = await prisma.blogPost.findMany({ where, orderBy: { createdAt: 'desc' } })
   return res.json(posts)
 }
 
 export async function getBySlug(req: Request, res: Response) {
   const post = await prisma.blogPost.findUnique({ where: { slug: req.params.slug, published: true } })
-  if (!post) return res.status(404).json({ error: 'Post não encontrado' })
+  if (!post) return res.status(404).json({ error: 'Não encontrado' })
   return res.json(post)
 }
 
 export async function create(req: Request, res: Response) {
   try {
     const { title, content, excerpt, coverUrl, category, published } = req.body
-    const post = await prisma.blogPost.create({ data: { title, slug: slugify(title), content, excerpt, coverUrl, category, published: !!published, publishedAt: published ? new Date() : null } })
+    const post = await prisma.blogPost.create({
+      data: { title, slug: slugify(title), content, excerpt, coverUrl, category, published: !!published, publishedAt: published ? new Date() : null },
+    })
     return res.status(201).json(post)
   } catch (e: any) { return res.status(400).json({ error: e.message }) }
 }

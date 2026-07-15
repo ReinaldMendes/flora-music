@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { prisma } from '../lib/prisma'
 
 export async function getAll(req: Request, res: Response) {
-  const { status } = req.query
-  const where = status ? { status: status as any } : {}
+  const where: any = {}
+  if (req.query.status) where.status = req.query.status
   const shows = await prisma.show.findMany({ where, orderBy: { date: 'asc' } })
   return res.json(shows)
 }

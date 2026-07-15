@@ -13,16 +13,15 @@ export async function login(req: Request, res: Response) {
     if (!valid) return res.status(401).json({ error: 'Credenciais inválidas' })
     const token = signToken({ id: user.id, email: user.email, role: user.role, name: user.name })
     return res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } })
-  } catch (e: any) {
-    return res.status(500).json({ error: e.message })
-  }
+  } catch (e: any) { return res.status(500).json({ error: e.message }) }
 }
 
 export async function me(req: any, res: Response) {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.user.id }, select: { id: true, name: true, email: true, role: true } })
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { id: true, name: true, email: true, role: true },
+    })
     return res.json(user)
-  } catch (e: any) {
-    return res.status(500).json({ error: e.message })
-  }
+  } catch (e: any) { return res.status(500).json({ error: e.message }) }
 }
